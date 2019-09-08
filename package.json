@@ -1,12 +1,12 @@
 {
   "private": true,
-  "name": "ophion",
+  "name": "froggins-server",
   "version": "1.0.0",
-  "description": "Ophion description.",
+  "description": "Froggins server description.",
   "author": "Andrew Zigler <andrewzigler@gmail.com> (https://www.andrewzigler.com)",
-  "main": "ophion.js",
+  "main": "froggins-server.js",
   "scripts": {
-    "serve": "node ophion"
+    "serve": "node froggins-server"
   },
   "dependencies": {
     "ws": "^7.1.2"
