@@ -1,3 +1,3 @@
 # froggins-server
 
-> :dragon: Server for [Froggins](https://froggins.andrewzigler.com) browser game.
+> :frog::satellite: Server for [Froggins](https://froggins.andrewzigler.com) browser game.
