@@ -11,6 +11,7 @@
     "dev": "npm run tunnel && npm run serve"
   },
   "dependencies": {
+    "dotenv": "^8.1.0",
     "nano": "^8.1.0",
     "ws": "^7.1.2"
   },
