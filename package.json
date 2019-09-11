@@ -2,13 +2,47 @@
   "private": true,
   "name": "froggins-server",
   "version": "1.0.0",
-  "description": "Froggins server description.",
+  "description": "Node server for Froggins browser game.",
   "author": "Andrew Zigler <andrewzigler@gmail.com> (https://www.andrewzigler.com)",
   "main": "froggins-server.js",
   "scripts": {
-    "serve": "node froggins-server"
+    "tunnel": "ssh -o ExitOnForwardFailure=yes -f -N -L 5984:127.0.0.1:5984 root@138.68.247.173 || exit 0",
+    "serve": "node froggins-server",
+    "dev": "npm run tunnel && npm run serve"
   },
   "dependencies": {
+    "nano": "^8.1.0",
     "ws": "^7.1.2"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.3.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-standard": "^4.0.1",
+    "standard": "^14.1.0"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "browser": true,
+      "commonjs": true,
+      "es6": true
+    },
+    "extends": [
+      "standard"
+    ],
+    "globals": {
+      "Atomics": "readonly",
+      "SharedArrayBuffer": "readonly"
+    },
+    "parserOptions": {
+      "ecmaVersion": 2018
+    },
+    "plugins": [
+      "standard"
+    ],
+    "rules": {
+      "no-console": 0
+    }
   }
 }
