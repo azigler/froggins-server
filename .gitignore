@@ -86,3 +86,7 @@ typings/
 
 # DynamoDB Local files
 .dynamodb/
+
+# PouchDB local databases
+/local/**
+!/local/.gitkeep
