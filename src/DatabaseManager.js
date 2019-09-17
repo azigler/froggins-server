@@ -5,28 +5,28 @@ class DatabaseManager extends Map {
   constructor (server) {
     super()
     this.server = server
-  }
+    this.server.on('start', () => {
+      console.log('Starting DatabaseManager...')
+      const dbs = [
+        'state'
+      ]
 
-  start () {
-    console.log('Starting DatabaseManager...')
-    const dbs = [
-      'state'
-    ]
+      for (const db of dbs) {
+        this.set(db, this.loadDb(db))
+      }
 
-    for (const db of dbs) {
-      this.set(db, this.loadDb(db))
-    }
+      this.server.$state = this.server.managers.get('DatabaseManager').get('state').local
 
-    // check for remote data
-    this.get('state').remote.get('debug').catch(() => {
+      // check for remote data
+      this.get('state').remote.get('debug').catch(() => {
       // CONVERT THIS OBJECT TO YAML FILE
-      this.initializeDocument({ db: 'state', doc: 'debug', payload: { _id: 'debug', clicks: 0 } })
+        this.initializeDocument({ db: 'state', doc: 'debug', payload: { _id: 'debug', clicks: 0 } })
+      })
     })
-  }
-
-  stop () {
-    console.log('Stopping DatabaseManager...')
-    this.stopSyncing()
+    this.server.on('stop', () => {
+      console.log('Stopping DatabaseManager...')
+      this.stopSyncing()
+    })
   }
 
   loadDb (name) {

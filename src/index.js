@@ -8,18 +8,14 @@ class FrogginsServer extends require('events') {
   constructor () {
     super()
 
+    this.managers = new Map([
+      ['DatabaseManager', new DatabaseManager(this)],
+      ['PlayerManager', new PlayerManager(this)],
+      ['WebSocketManager', new WebSocketManager({ server: this })]
+    ])
+
     this.on('start', () => {
       console.log('Starting Froggins!')
-      if (!this.managers) {
-        this.managers = new Map([
-          ['DatabaseManager', new DatabaseManager(this)],
-          ['PlayerManager', new PlayerManager(this)],
-          ['WebSocketManager', new WebSocketManager({ server: this })]
-        ])
-      }
-      this.managers.forEach((value) => {
-        value.start()
-      })
       this.startTime = moment().format()
       this.secondsPerLoop = 30
       this.gameLoop = false
@@ -31,9 +27,6 @@ class FrogginsServer extends require('events') {
       console.log('Stopping Froggins!')
       clearTimeout(this.gameLoop)
       this.gameLoop = false
-      this.managers.forEach((value) => {
-        value.stop()
-      })
     })
   }
 
