@@ -19,7 +19,6 @@ class FrogginsServer extends require('events') {
       this.startTime = moment().format()
       this.secondsPerLoop = 30
       this.gameLoop = false
-      this.$state = this.managers.get('DatabaseManager').get('state').local
       this.gameLoop = setInterval(this.loop.bind(this), this.secondsPerLoop * 1000)
     })
 
@@ -31,7 +30,7 @@ class FrogginsServer extends require('events') {
   }
 
   loop () {
-    console.log('[#] looping @ ', moment().format())
+    console.log('[#] looping @', moment().format())
   }
 
   start () {

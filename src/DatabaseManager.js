@@ -19,7 +19,7 @@ class DatabaseManager extends Map {
 
       // check for remote data
       this.get('state').remote.get('debug').catch(() => {
-      // CONVERT THIS OBJECT TO YAML FILE
+      // TODO: convert this type of initialization to read from YAML
         this.initializeDocument({ db: 'state', doc: 'debug', payload: { _id: 'debug', clicks: 0 } })
       })
     })
