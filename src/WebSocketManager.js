@@ -48,7 +48,7 @@ class WebSocketManager extends require('ws').Server {
         connection.close()
       })
       this.on('connection', connection => {
-        console.log(`Someone tried to connect from ${connection._socket.remoteAddress} while the server is stopped.`)
+        console.log(`Someone tried to connect from ${connection._socket.remoteAddress} while the server was stopped!`)
 
         // TODO: use Ribbit to systematically communicate stopped status (not like this!)
         this.sendObj(connection, {
