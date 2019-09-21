@@ -90,3 +90,5 @@ typings/
 # PouchDB local databases
 /local/**
 !/local/.gitkeep
+
+.DS_Store

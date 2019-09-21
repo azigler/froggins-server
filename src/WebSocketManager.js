@@ -88,10 +88,7 @@ class WebSocketManager extends require('ws').Server {
     })
 
     connection.on('close', message => {
-      // remove from playermanager
       this.server.managers.get('PlayerManager').delete(connection.id)
-      console.log(message)
-      console.log('connection closed')
     })
   }
 
