@@ -91,4 +91,5 @@ typings/
 /local/**
 !/local/.gitkeep
 
+# MacOS files
 .DS_Store
