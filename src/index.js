@@ -1,5 +1,4 @@
 const moment = require('moment')
-
 const DatabaseManager = require('./DatabaseManager')
 const PlayerManager = require('./PlayerManager')
 const WebSocketManager = require('./WebSocketManager')
