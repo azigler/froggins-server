@@ -5,6 +5,7 @@ const Froggins = new FrogginsServer()
 console.log('=====INITIAL START=====')
 Froggins.start()
 
+/*
 let looping = false
 
 const debugStop = () => {
@@ -20,3 +21,4 @@ const debugStart = () => {
 }
 
 setTimeout(() => { debugStop(); setTimeout(() => { debugStart(); looping = true }, 20000) }, 20000)
+*/

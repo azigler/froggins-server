@@ -16,12 +16,6 @@ class DatabaseManager extends Map {
       }
 
       this.server.$state = this.server.managers.get('DatabaseManager').get('state').local
-
-      // check for remote data
-      this.get('state').remote.get('debug').catch(() => {
-      // TODO: convert this type of initialization to read from YAML
-        this.initializeDocument({ db: 'state', doc: 'debug', payload: { _id: 'debug', clicks: 0 } })
-      })
     })
     this.server.on('stop', () => {
       console.log('Stopping DatabaseManager...')
@@ -51,7 +45,7 @@ class DatabaseManager extends Map {
   }
 
   initializeDocument ({ db, doc, payload }) {
-    console.log(`No remote ${db} found, initializing ${doc} state!`)
+    console.log(`No remote ${db} found, initializing ${doc}!`)
     this.get(db).remote.put({ _id: doc, ...payload })
   }
 

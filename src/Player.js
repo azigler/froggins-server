@@ -7,6 +7,7 @@ class Player {
     this.socket = connection
     this.uuid = uuidv4()
     this.ipAddress = this.socket._socket.remoteAddress
+    this.handlers = new Map()
 
     console.log(`Initialized player ${this.uuid}!`)
     server.managers.get('PlayerManager').addPlayer(this.uuid, this)

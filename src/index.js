@@ -21,6 +21,24 @@ class FrogginsServer extends require('events') {
       this.gameLoop = false
     })
 
+    this.ribbitSend = function (player, message) {
+      const data = {
+        timestamp: moment().format(),
+        ...message
+      }
+      player.socket.send(JSON.stringify(data))
+    }
+
+    this.ribbitSendAll = function (message) {
+      const data = {
+        timestamp: moment().format(),
+        ...message
+      }
+      this.managers.get('PlayerManager').forEach(player => {
+        player.socket.send(JSON.stringify(data))
+      })
+    }
+
     this.managers = new Map([
       ['DatabaseManager', new DatabaseManager(this)],
       ['PlayerManager', new PlayerManager(this)],
