@@ -1,5 +1,5 @@
 module.exports = {
-  init: (server, player) => {
+  setup: (server, player) => {
     server.$state.get('debug').then(state => {
       server.ribbitSend(player, {
         id: 'debug',
