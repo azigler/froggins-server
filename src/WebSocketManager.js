@@ -49,7 +49,7 @@ class WebSocketManager extends require('ws').Server {
           switch (data.type) {
             case 'add-handler': {
               player.handlers.set(data.id, require(`../data/handler/${data.id}`))
-              player.handlers.get(data.id).setup(this.server, player)
+              player.handlers.get(data.id).setUp(this.server, player)
               break
             }
             case 'remove-handler': {

@@ -11,7 +11,6 @@ class FrogginsServer extends require('events') {
       console.log('Starting Froggins!')
       this.startTime = moment().format()
       this.secondsPerLoop = 30
-      this.gameLoop = false
       this.gameLoop = setInterval(this.loop.bind(this), this.secondsPerLoop * 1000)
     })
 
