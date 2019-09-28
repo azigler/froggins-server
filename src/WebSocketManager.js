@@ -28,6 +28,7 @@ class WebSocketManager extends require('ws').Server {
         })
 
         // send initial Ribbits to client
+        // TODO: move to authentication response
         this.server.ribbitSend(player, {
           id: 'player.uuid',
           type: 'set',
