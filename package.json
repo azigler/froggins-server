@@ -8,9 +8,10 @@
   "scripts": {
     "tunnel": "ssh -o ExitOnForwardFailure=yes -f -N -L 5984:127.0.0.1:5984 root@138.68.247.173 || exit 0",
     "serve": "node index",
-    "dev": "npm run tunnel && npm run serve"
+    "dev": "npm run tunnel && nodemon index"
   },
   "dependencies": {
+    "bcrypt": "^3.0.6",
     "dotenv": "^8.1.0",
     "moment": "^2.24.0",
     "pouchdb": "^7.1.1",
