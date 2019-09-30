@@ -12,10 +12,10 @@ class PlayerManager extends Map {
     })
   }
 
-  addPlayer (playerUuid, player) {
-    this.set(playerUuid, player)
+  addPlayer (playerUsername, player) {
+    this.set(playerUsername, player)
     this.forEach(player => {
-      if (player.uuid !== playerUuid) {
+      if (player.uuid !== playerUsername) {
         this.server.ribbitSend(player, {
           id: 'server.connectedPlayers',
           type: 'set',
@@ -23,11 +23,11 @@ class PlayerManager extends Map {
         })
       }
     })
-    console.log(`Added ${playerUuid} to PlayerManager!`)
+    console.log(`[+] Added ${playerUsername} to PlayerManager`)
   }
 
-  removePlayer (playerUuid) {
-    this.delete(playerUuid)
+  removePlayer (playerUsername) {
+    this.delete(playerUsername)
     this.forEach(player => {
       this.server.ribbitSend(player, {
         id: 'server.connectedPlayers',
@@ -35,7 +35,7 @@ class PlayerManager extends Map {
         value: [...this.keys()]
       })
     })
-    console.log(`Removed ${playerUuid} from PlayerManager!`)
+    console.log(`[-] Removed ${playerUsername} from PlayerManager`)
   }
 }
 

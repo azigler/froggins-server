@@ -1,5 +1,7 @@
 require('dotenv').config()
 const Player = require('./Player')
+const bcrypt = require('bcrypt')
+const saltRounds = 10
 
 class WebSocketManager extends require('ws').Server {
   constructor ({ server, port = process.env.WEBSOCKET_PORT }) {
@@ -16,52 +18,141 @@ class WebSocketManager extends require('ws').Server {
 
       // handle connection
       this.on('connection', connection => {
-        const player = new Player(this.server, connection)
-
-        console.log(`== ${player.uuid} connected from ${player.ipAddress} ==`)
-
+        connection.server = this.server
         // send server status to client
-        this.server.ribbitSend(player, {
+        this.server.ribbitSend({ socket: connection }, {
           id: 'server.online',
-          // no type
           value: true
         })
 
-        // send initial Ribbits to client
-        // TODO: move to authentication response
-        this.server.ribbitSend(player, {
-          id: 'player.uuid',
-          type: 'set',
-          value: player.uuid
-        })
-        this.server.ribbitSend(player, {
-          id: 'server.connectedPlayers',
-          type: 'set',
-          value: [...server.managers.get('PlayerManager').keys()]
-        })
+        // announce connection
+        // TODO: log connection IP and add security (reject lingering/spammy clients)
+        console.log(`[!] ${connection._socket.remoteAddress} has connected`)
 
-        player.socket.on('close', () => {
-          this.server.managers.get('PlayerManager').removePlayer(player.uuid)
-        })
+        // add listener to handle when connection closes
+        connection.on('close', () => console.log(`[!] ${connection._socket.remoteAddress} has disconnected`))
 
-        player.socket.on('message', message => {
+        // authenticate the user with named function that can be removed later
+        connection.on('message', async function authenticate (message) {
           const data = JSON.parse(message)
 
-          switch (data.type) {
-            case 'add-handler': {
-              player.handlers.set(data.id, require(`../data/handler/${data.id}`))
-              player.handlers.get(data.id).setUp(this.server, player)
-              break
+          // HANDLE LOGIN
+          if (data.id === 'login') {
+            if (!data.username) {
+              return connection.server.ribbitSend({ socket: connection }, {
+                id: 'reject-login',
+                type: 'no-username',
+                value: 'No username was provided.'
+              })
             }
-            case 'remove-handler': {
-              player.handlers.delete(data.id)
-              break
-            }
-          }
 
-          // handle message via player handlers
-          if (data.handler && player.handlers.get(data.handler)) {
-            player.handlers.get(data.handler).handle(this.server, player, data)
+            if (!data.password) {
+              return connection.server.ribbitSend({ socket: connection }, {
+                id: 'reject-login',
+                type: 'no-password',
+                value: 'No password was provided.'
+              })
+            }
+
+            // authenticate user credentials
+            const loginSuccessful = await connection.server.$user.get(data.username).then(user => {
+              return bcrypt.compareSync(data.password, user.password)
+            }).catch((er) => {
+              if (er.status === 404) {
+                connection.server.ribbitSend({ socket: connection }, {
+                  id: 'reject-login',
+                  type: 'wrong-input',
+                  value: 'Wrong username or password.'
+                })
+              } else {
+                console.log(`[!] ${connection._socket.remoteAddress} unexpectedly failed to log in:`, er)
+                connection.server.ribbitSend({ socket: connection }, {
+                  id: 'reject-login',
+                  type: 'unexpected-error',
+                  value: 'An unexpected error occurred.'
+                })
+              }
+            })
+
+            if (loginSuccessful) {
+              // initialize the Player object
+              connection.username = data.username
+              const player = new Player(connection.server, connection)
+              connection.server.managers.get('PlayerManager').addPlayer(player.username, player)
+
+              // notify of login success
+              connection.server.ribbitSend({ socket: connection }, {
+                id: 'confirm-login'
+                // TODO: send initial player data
+              })
+              console.log(`[%] ${connection._socket.remoteAddress} logged in as: ${data.username}`)
+
+              // remove the authentication listener
+              connection.removeEventListener('message', authenticate)
+            } else {
+              connection.server.ribbitSend({ socket: connection }, {
+                id: 'reject-login',
+                type: 'wrong-input',
+                value: 'Wrong username or password.'
+              })
+            }
+
+          // HANDLE REGISTRATION
+          } if (data.id === 'registration') {
+            if (!data.username) {
+              return connection.server.ribbitSend({ socket: connection }, {
+                id: 'reject-registration',
+                type: 'no-username',
+                value: 'No username was provided.'
+              })
+            }
+
+            if (!data.password) {
+              return connection.server.ribbitSend({ socket: connection }, {
+                id: 'reject-registration',
+                type: 'no-password',
+                value: 'No password was provided.'
+              })
+            }
+
+            // check if username is taken
+            await connection.server.$user.get(data.username).then(() => {
+              connection.server.ribbitSend({ socket: connection }, {
+                id: 'reject-registration',
+                type: 'username-taken',
+                value: 'That username is already taken.'
+              })
+              console.log(`[!] ${connection._socket.remoteAddress} attempted to register a taken username: ${data.username}`)
+            }).catch((er) => {
+              // if a user entry is not found with that username
+              if (er.message === 'missing') {
+                // hash the password before storing
+                const passwordHash = bcrypt.hashSync(data.password, saltRounds)
+
+                // add the new player registration to the user database
+                connection.server.managers.get('DatabaseManager').initializeDocument({
+                  db: 'user',
+                  doc: data.username,
+                  payload: {
+                    username: data.username,
+                    password: passwordHash
+                  }
+                })
+
+                // initialize the Player object
+                connection.username = data.username
+                const player = new Player(connection.server, connection)
+                connection.server.managers.get('PlayerManager').addPlayer(player.username, player)
+
+                // notify of registration success
+                connection.server.ribbitSend({ socket: connection }, {
+                  id: 'confirm-registration'
+                  // TODO: send initial player data
+                })
+
+                console.log(`[%] ${connection._socket.remoteAddress} registered a new account as: ${data.username}`)
+              }
+            })
           }
         })
       })
@@ -76,12 +167,11 @@ class WebSocketManager extends require('ws').Server {
 
         // handle connection
         this.on('connection', connection => {
-          console.log(`Someone tried to connect from ${connection._socket.remoteAddress} while the server was stopped!`)
+          console.log(`[!] ${connection._socket.remoteAddress} attempted to connect while server is stopped`)
 
           // send server status to client
           this.server.ribbitSend({ socket: connection }, {
             id: 'server-online',
-            // no type
             value: false
           })
         })

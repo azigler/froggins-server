@@ -2,7 +2,7 @@ console.log('Initializing Froggins server...')
 const FrogginsServer = require('./src')
 const Froggins = new FrogginsServer()
 
-console.log('=====INITIAL START=====')
+console.log('=========INITIAL START=========')
 Froggins.start()
 
 /*

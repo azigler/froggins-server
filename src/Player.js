@@ -8,9 +8,46 @@ class Player {
     this.uuid = uuidv4()
     this.ipAddress = this.socket._socket.remoteAddress
     this.handlers = new Map()
+    this.username = connection.username
 
-    console.log(`Initialized player ${this.uuid}!`)
-    server.managers.get('PlayerManager').addPlayer(this.uuid, this)
+    console.log(`[@] Player ${this.username} was initialized`)
+
+    this.socket.on('close', () => {
+      this.server.managers.get('PlayerManager').removePlayer(this.username)
+    })
+
+    this.socket.on('message', message => {
+      const data = JSON.parse(message)
+
+      switch (data.type) {
+        case 'add-handler': {
+          this.handlers.set(data.id, require(`../data/handler/${data.id}`))
+          this.handlers.get(data.id).setUp(this.server, this)
+          break
+        }
+        case 'remove-handler': {
+          this.handlers.delete(data.id)
+          break
+        }
+      }
+
+      // handle message via handlers
+      if (data.handler && this.handlers.get(data.handler)) {
+        this.handlers.get(data.handler).handle(this.server, this, data)
+      }
+    })
+
+    // send initial Ribbits to player's client
+    server.ribbitSend(this, {
+      id: 'player.uuid',
+      type: 'set',
+      value: this.uuid
+    })
+    server.ribbitSend(this, {
+      id: 'server.connectedPlayers',
+      type: 'set',
+      value: [...server.managers.get('PlayerManager').keys()]
+    })
   }
 }
 

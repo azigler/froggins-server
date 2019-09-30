@@ -46,7 +46,7 @@ class FrogginsServer extends require('events') {
   }
 
   loop () {
-    console.log('[#] looping @', moment().format())
+    console.log('[#] Looping @', moment().format())
   }
 
   start () {
