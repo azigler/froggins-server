@@ -1,11 +1,23 @@
 require('dotenv').config()
 const Player = require('./Player')
 const bcrypt = require('bcrypt')
+const https = require('https')
+const fs = require('fs')
 const saltRounds = 10
 
 class WebSocketManager extends require('ws').Server {
   constructor ({ server, port = process.env.WEBSOCKET_PORT }) {
-    super({ port })
+    // read ssl certificate
+    const privateKey = fs.readFileSync('./privkey.pem', 'utf8')
+    const certificate = fs.readFileSync('./fullchain.pem', 'utf8')
+
+    const credentials = { key: privateKey, cert: certificate }
+
+    // pass in your credentials to create an https server
+    const httpsServer = https.createServer(credentials)
+    httpsServer.listen(8443)
+
+    super({ server: httpsServer })
     this.server = server
 
     // when server is started
