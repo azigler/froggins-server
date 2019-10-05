@@ -34,7 +34,7 @@ class WebSocketManager extends require('ws').Server {
         connection.server = this.server
         // send server status to client
         this.server.ribbitSend({ socket: connection }, {
-          id: 'server.online-YAS02',
+          id: 'server.online-YAS03',
           value: true
         })
 
