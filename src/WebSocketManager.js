@@ -72,7 +72,7 @@ class WebSocketManager extends require('ws').Server {
             }
 
             // authenticate user credentials
-            const loginSuccessful = await connection.server.$user.get(data.username).then(user => {
+            const loginSuccessful = await connection.server.$user.get(data.username.toLowerCase()).then(user => {
               return bcrypt.compareSync(data.password, user.password)
             }).catch((er) => {
               if (er.status === 404) {
@@ -153,7 +153,7 @@ class WebSocketManager extends require('ws').Server {
                 // add the new player registration to the user database
                 connection.server.managers.get('DatabaseManager').initializeDocument({
                   db: 'user',
-                  doc: data.username,
+                  doc: data.username.toLowerCase(),
                   payload: {
                     username: data.username,
                     password: passwordHash
