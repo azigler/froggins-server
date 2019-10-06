@@ -3,6 +3,11 @@ const DatabaseManager = require('./DatabaseManager')
 const PlayerManager = require('./PlayerManager')
 const WebSocketManager = require('./WebSocketManager')
 
+/* eslint-disable no-extend-native */
+String.prototype.capitalize = function () {
+  return this.charAt(0).toUpperCase() + this.slice(1)
+}
+
 class FrogginsServer extends require('events') {
   constructor () {
     super()
@@ -36,6 +41,22 @@ class FrogginsServer extends require('events') {
       this.managers.get('PlayerManager').forEach(player => {
         player.socket.send(JSON.stringify(data))
       })
+    }
+
+    this.validate = function ({ label, field, length = false, alphanumeric = false }) {
+      if (field.length === 0) {
+        return `No ${label} was provided.`
+      }
+
+      if (length !== false && field.length < length) {
+        return `${label.capitalize()} is not long enough.`
+      }
+
+      if (alphanumeric && /^[a-zA-Z0-9]+$/.test(field) === false) {
+        return `${label.capitalize()} contains invalid characters.`
+      } else {
+        return true
+      }
     }
 
     this.managers = new Map([

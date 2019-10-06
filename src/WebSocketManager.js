@@ -5,7 +5,7 @@ const saltRounds = 10
 
 class WebSocketManager extends require('ws').Server {
   constructor ({ server, port = process.env.WEBSOCKET_PORT }) {
-    if (process.env.MODE === 'development') {
+    if (process.env.NODE_ENV === 'development') {
       super({ port })
     } else {
       const https = require('https')
@@ -51,19 +51,23 @@ class WebSocketManager extends require('ws').Server {
 
           // HANDLE LOGIN
           if (data.id === 'login') {
-            if (!data.username) {
-              return connection.server.ribbitSend({ socket: connection }, {
-                id: 'reject-login',
-                type: 'no-username',
-                value: 'No username was provided.'
-              })
-            }
+            const usernameValidation = connection.server.validate({
+              label: 'username',
+              field: data.username,
+              length: 4,
+              alphanumeric: true
+            })
+            const passwordValidation = connection.server.validate({
+              label: 'password',
+              field: data.password,
+              length: 6
+            })
 
-            if (!data.password) {
+            if (usernameValidation !== true || passwordValidation !== true) {
               return connection.server.ribbitSend({ socket: connection }, {
                 id: 'reject-login',
-                type: 'no-password',
-                value: 'No password was provided.'
+                type: 'invalid-input',
+                value: 'The input was invalid.'
               })
             }
 
@@ -112,19 +116,23 @@ class WebSocketManager extends require('ws').Server {
 
           // HANDLE REGISTRATION
           } if (data.id === 'registration') {
-            if (!data.username) {
-              return connection.server.ribbitSend({ socket: connection }, {
-                id: 'reject-registration',
-                type: 'no-username',
-                value: 'No username was provided.'
-              })
-            }
+            const usernameValidation = connection.server.validate({
+              label: 'username',
+              field: data.username,
+              length: 4,
+              alphanumeric: true
+            })
+            const passwordValidation = connection.server.validate({
+              label: 'password',
+              field: data.password,
+              length: 6
+            })
 
-            if (!data.password) {
+            if (usernameValidation !== true || passwordValidation !== true) {
               return connection.server.ribbitSend({ socket: connection }, {
                 id: 'reject-registration',
-                type: 'no-password',
-                value: 'No password was provided.'
+                type: 'invalid-input',
+                value: 'The input was invalid.'
               })
             }
 
