@@ -137,7 +137,7 @@ class WebSocketManager extends require('ws').Server {
             }
 
             // check if username is taken
-            await connection.server.$user.get(data.username).then(() => {
+            await connection.server.$user.get(data.username.toLowerCase()).then(() => {
               connection.server.ribbitSend({ socket: connection }, {
                 id: 'reject-registration',
                 type: 'username-taken',
