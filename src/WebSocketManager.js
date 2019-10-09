@@ -34,6 +34,7 @@ class WebSocketManager extends require('ws').Server {
         connection.server = this.server
         // send server status to client
         this.server.ribbitSend({ socket: connection }, {
+          type: 'server-status',
           id: 'server.online',
           value: true
         })
@@ -65,8 +66,8 @@ class WebSocketManager extends require('ws').Server {
 
             if (usernameValidation !== true || passwordValidation !== true) {
               return connection.server.ribbitSend({ socket: connection }, {
-                id: 'reject-login',
                 type: 'invalid-input',
+                id: 'reject-login',
                 value: 'The input was invalid.'
               })
             }
@@ -77,15 +78,15 @@ class WebSocketManager extends require('ws').Server {
             }).catch((er) => {
               if (er.status === 404) {
                 connection.server.ribbitSend({ socket: connection }, {
-                  id: 'reject-login',
                   type: 'wrong-input',
+                  id: 'reject-login',
                   value: 'Wrong username or password.'
                 })
               } else {
                 console.log(`[!] ${connection._socket.remoteAddress} unexpectedly failed to log in:`, er)
                 connection.server.ribbitSend({ socket: connection }, {
-                  id: 'reject-login',
                   type: 'unexpected-error',
+                  id: 'reject-login',
                   value: 'An unexpected error occurred.'
                 })
               }
@@ -108,8 +109,8 @@ class WebSocketManager extends require('ws').Server {
               connection.removeEventListener('message', authenticate)
             } else {
               connection.server.ribbitSend({ socket: connection }, {
-                id: 'reject-login',
                 type: 'wrong-input',
+                id: 'reject-login',
                 value: 'Wrong username or password.'
               })
             }
@@ -130,8 +131,8 @@ class WebSocketManager extends require('ws').Server {
 
             if (usernameValidation !== true || passwordValidation !== true) {
               return connection.server.ribbitSend({ socket: connection }, {
-                id: 'reject-registration',
                 type: 'invalid-input',
+                id: 'reject-registration',
                 value: 'The input was invalid.'
               })
             }
@@ -139,8 +140,8 @@ class WebSocketManager extends require('ws').Server {
             // check if username is taken
             await connection.server.$user.get(data.username.toLowerCase()).then(() => {
               connection.server.ribbitSend({ socket: connection }, {
-                id: 'reject-registration',
                 type: 'username-taken',
+                id: 'reject-registration',
                 value: 'That username is already taken.'
               })
               console.log(`[!] ${connection._socket.remoteAddress} attempted to register a taken username: ${data.username}`)
@@ -192,7 +193,8 @@ class WebSocketManager extends require('ws').Server {
 
           // send server status to client
           this.server.ribbitSend({ socket: connection }, {
-            id: 'server-online',
+            type: 'server-status',
+            id: 'server.online',
             value: false
           })
         })

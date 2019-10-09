@@ -17,8 +17,8 @@ class PlayerManager extends Map {
     this.forEach(player => {
       if (player.uuid !== playerUsername) {
         this.server.ribbitSend(player, {
-          id: 'server.connectedPlayers',
           type: 'set',
+          id: 'server.connectedPlayers',
           value: [...this.keys()]
         })
       }
@@ -30,8 +30,8 @@ class PlayerManager extends Map {
     this.delete(playerUsername)
     this.forEach(player => {
       this.server.ribbitSend(player, {
-        id: 'server.connectedPlayers',
         type: 'set',
+        id: 'server.connectedPlayers',
         value: [...this.keys()]
       })
     })

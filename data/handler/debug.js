@@ -2,8 +2,8 @@ module.exports = {
   setUp: (server, player) => {
     server.$state.get('debug').then(state => {
       server.ribbitSend(player, {
-        id: 'debug',
         type: 'set',
+        id: 'debug',
         value: state
       })
     })
@@ -24,8 +24,8 @@ module.exports = {
           state.clicks++
           console.log(`Clicks incremented to: ${state.clicks}`)
           server.ribbitSendAll({
-            id: 'debug.clicks',
             type: 'set',
+            id: 'debug.clicks',
             value: state.clicks
           })
           return server.$state.put(state)
@@ -36,8 +36,8 @@ module.exports = {
         server.$state.get('debug').then(state => {
           console.log(`Client fetched server clicks: ${state.clicks}`)
           server.ribbitSend(player, {
-            id: 'state.clicks',
             type: 'set',
+            id: 'state.clicks',
             value: state.clicks
           })
         }).catch(() => server.managers.get('DatabaseManager').initializeDocument({ db: 'state', doc: 'debug', payload: { _id: 'debug', clicks: 0 } }))

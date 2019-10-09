@@ -39,13 +39,13 @@ class Player {
 
     // send initial Ribbits to player's client
     server.ribbitSend(this, {
-      id: 'player.uuid',
       type: 'set',
+      id: 'player.uuid',
       value: this.uuid
     })
     server.ribbitSend(this, {
-      id: 'server.connectedPlayers',
       type: 'set',
+      id: 'server.connectedPlayers',
       value: [...server.managers.get('PlayerManager').keys()]
     })
   }
