@@ -18,7 +18,7 @@ class PlayerManager extends Map {
       if (player.uuid !== playerUsername) {
         this.server.ribbitSend(player, {
           type: 'set',
-          id: 'server.connectedPlayers',
+          id: 'server.onlinePlayers',
           value: [...this.keys()]
         })
       }
@@ -31,7 +31,7 @@ class PlayerManager extends Map {
     this.forEach(player => {
       this.server.ribbitSend(player, {
         type: 'set',
-        id: 'server.connectedPlayers',
+        id: 'server.onlinePlayers',
         value: [...this.keys()]
       })
     })

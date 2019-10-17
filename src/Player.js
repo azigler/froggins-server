@@ -45,7 +45,7 @@ class Player {
     })
     server.ribbitSend(this, {
       type: 'set',
-      id: 'server.connectedPlayers',
+      id: 'server.onlinePlayers',
       value: [...server.managers.get('PlayerManager').keys()]
     })
   }
