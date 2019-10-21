@@ -1,4 +1,5 @@
 const moment = require('moment')
+const CutsceneManager = require('./CutsceneManager')
 const DatabaseManager = require('./DatabaseManager')
 const PlayerManager = require('./PlayerManager')
 const WebSocketManager = require('./WebSocketManager')
@@ -60,6 +61,7 @@ class FrogginsServer extends require('events') {
     }
 
     this.managers = new Map([
+      ['CutsceneManager', new CutsceneManager(this)],
       ['DatabaseManager', new DatabaseManager(this)],
       ['PlayerManager', new PlayerManager(this)],
       ['WebSocketManager', new WebSocketManager({ server: this })]
