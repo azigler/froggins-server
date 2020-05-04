@@ -5,6 +5,7 @@ class DatabaseManager extends Map {
   constructor (server) {
     super()
     this.server = server
+    this.namespace = 'fr_'
 
     this.server.on('start', () => {
       console.log('Starting DatabaseManager...')
@@ -29,7 +30,7 @@ class DatabaseManager extends Map {
 
   loadDb (name) {
     const local = new PouchDB(`local/${name}`)
-    const remote = new PouchDB(`http://${process.env.COUCHDB_USERNAME}:${process.env.COUCHDB_PASSWORD}@localhost:5984/${name}`)
+    const remote = new PouchDB(`http://${process.env.COUCHDB_USERNAME}:${process.env.COUCHDB_PASSWORD}@localhost:5984/${this.namespace}${name}`)
     console.log(`[=] Syncing ${name} database...`)
     const sync = local.sync(remote, {
       live: true,
