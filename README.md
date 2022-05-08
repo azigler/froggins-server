@@ -3,3 +3,5 @@
 # froggins-server *\*\*(deprecated)\*\**
 
 > :frog::satellite: Server for [Froggins](https://froggins.andrewzigler.com) browser game.
+
+See also: [froggins-client](https://github.com/azigler/froggins-client)
