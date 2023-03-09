@@ -14,7 +14,7 @@
   "dependencies": {
     "bcrypt": "^3.0.6",
     "dotenv": "^8.1.0",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "pouchdb": "^7.1.1",
     "uuid": "^3.3.3",
     "ws": "^7.1.2"
